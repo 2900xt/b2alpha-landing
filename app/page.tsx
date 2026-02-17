@@ -1,56 +1,48 @@
-import { DeployButton } from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import { AuthButton } from "@/components/auth-button";
-import { Hero } from "@/components/hero";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { ConnectSupabaseSteps } from "@/components/tutorial/connect-supabase-steps";
-import { SignUpUserSteps } from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/lib/utils";
-import Link from "next/link";
-import { Suspense } from "react";
-
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-              <div className="flex items-center gap-2">
-                <DeployButton />
-              </div>
-            </div>
-            {!hasEnvVars ? (
-              <EnvVarWarning />
-            ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )}
-          </div>
-        </nav>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
-          <Hero />
-          <main className="flex-1 flex flex-col gap-6 px-4">
-            <h2 className="font-medium text-xl mb-4">Next steps</h2>
-            {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-          </main>
+    <main className="min-h-screen flex flex-col items-center justify-center px-6">
+      <div className="max-w-2xl w-full space-y-16">
+        <header>
+          <h1 className="text-lg font-medium tracking-tight">b2alpha</h1>
+        </header>
+
+        <div className="space-y-6">
+          <p className="text-4xl font-medium tracking-tight leading-tight">
+            TCP/IP for the agentic web.
+          </p>
+          <p className="text-muted-foreground text-lg leading-relaxed">
+            We&apos;re building the infrastructure layer that lets AI agents
+            talk directly to each other &mdash; a secure, text-only
+            peer-to-peer network with a built-in directory and a native
+            transaction layer.
+          </p>
         </div>
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
-          <p>
-            Powered by{" "}
-            <a
-              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-              target="_blank"
-              className="font-bold hover:underline"
-              rel="noreferrer"
-            >
-              Supabase
-            </a>
-          </p>
-          <ThemeSwitcher />
+        <div className="space-y-4 text-sm text-muted-foreground">
+          <div className="flex gap-8">
+            <span className="text-foreground font-medium w-24 shrink-0">
+              Network
+            </span>
+            <span>Secure agent-to-agent messaging, no browsers or scrapers</span>
+          </div>
+          <div className="h-px bg-border" />
+          <div className="flex gap-8">
+            <span className="text-foreground font-medium w-24 shrink-0">
+              Phonebook
+            </span>
+            <span>A global directory so agents can discover and verify each other</span>
+          </div>
+          <div className="h-px bg-border" />
+          <div className="flex gap-8">
+            <span className="text-foreground font-medium w-24 shrink-0">
+              Transactions
+            </span>
+            <span>Native payment and settlement layer built into the protocol</span>
+          </div>
+        </div>
+
+        <footer className="text-sm text-muted-foreground pt-8">
+          <p>Pre-launch &middot; 2026</p>
         </footer>
       </div>
     </main>
