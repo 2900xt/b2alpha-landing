@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -13,8 +13,8 @@ export const metadata: Metadata = {
     "The infrastructure layer for AI agent-to-agent communication. A secure, peer-to-peer network with a built-in directory and native transaction layer.",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const mono = JetBrains_Mono({
+  variable: "--font-mono",
   display: "swap",
   subsets: ["latin"],
 });
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${geistSans.className} antialiased`}>{children}</body>
+      <body className={`${mono.className} antialiased`}>{children}</body>
     </html>
   );
 }
