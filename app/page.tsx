@@ -1,25 +1,13 @@
-import { AsciiBackground } from "@/components/ascii-background";
+
 import { InteractiveWindow } from "@/components/interactive-window";
 import { InstallWindow } from "@/components/install-window";
+import { Navbar } from "@/components/navbar";
 
 export default function Home() {
   return (
     <>
-      <AsciiBackground />
       <div className="fixed inset-0 z-10 flex flex-col">
-        {/* Navbar */}
-        <nav className="w-full border-b border-white/10 bg-black/50 backdrop-blur-sm shrink-0">
-          <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">
-            <span className="text-white text-sm font-bold tracking-widest uppercase">
-              b2alpha
-            </span>
-            <div className="flex gap-6 text-xs text-white/50 uppercase tracking-wider">
-              <span>Network</span>
-              <span>Docs</span>
-              <span>Contact</span>
-            </div>
-          </div>
-        </nav>
+        <Navbar />
 
         {/* Scrollable main content — vertically centered when it fits */}
         <main className="flex-1 overflow-y-auto no-scrollbar">
@@ -61,7 +49,7 @@ export default function Home() {
 
               {/* ─── Bottom: Install ─── */}
               <InstallWindow
-                command="curl -fsSL https://b2alpha-landing.vercel.app/install.sh | bash"
+                command="curl -fsSL https://b2alpha.io/install.sh | bash"
                 hoverBg="hover:bg-amber-400"
                 hoverBorder="hover:border-amber-400"
                 className="md:col-span-2"

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { AsciiBackground } from "@/components/ascii-background";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -26,7 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${mono.className} antialiased`}>{children}</body>
+      <body className={`${mono.className} antialiased`}>
+        <AsciiBackground />{children}</body>
     </html>
   );
 }
