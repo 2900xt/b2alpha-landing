@@ -40,7 +40,7 @@ export function InstallWindow({
                 type="button"
                 onClick={handleCopy}
                 aria-label="Copy install command"
-                className="group w-full text-left rounded-md overflow-hidden border border-white/10 bg-[#0c0c0c] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="group w-full text-left rounded-sm overflow-hidden border border-white/10 bg-black/30 backdrop-blur-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
                 {/* Title bar */}
                 <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/10 bg-white/5">
