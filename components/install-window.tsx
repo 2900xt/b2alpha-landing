@@ -4,17 +4,11 @@ import { useState, useCallback } from "react";
 
 interface InstallWindowProps {
     command: string;
-    hoverBg?: string;
-    hoverBorder?: string;
-    hoverText?: string;
     className?: string;
 }
 
 export function InstallWindow({
     command,
-    hoverBg = "hover:bg-amber-400",
-    hoverBorder = "hover:border-amber-400",
-    hoverText = "group-hover:text-zinc-900",
     className = "",
 }: InstallWindowProps) {
     const [copied, setCopied] = useState(false);
@@ -39,60 +33,63 @@ export function InstallWindow({
     }, [command]);
 
     return (
-        <button
-            type="button"
-            onClick={handleCopy}
-            aria-label="Copy install command"
-            className={`
-        group relative text-left w-full
-        border border-white/15 rounded-md
-        bg-black/70 backdrop-blur-sm
-        p-6 sm:p-8
-        cursor-pointer
-        transition-all duration-200 ease-out
-        ${hoverBg} ${hoverBorder}
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black
-        ${className}
-      `}
-        >
-            {/* Label */}
-            <span
-                className={`
-          text-[10px] uppercase tracking-[0.2em] font-bold
-          text-amber-400
-          ${hoverText}
-          transition-colors duration-200
-        `}>
-                FOR EVERYONE
-            </span>
+        <div className={`relative w-full ${className}`}>
 
-            {/* Command */}
-            <div className="mt-4">
-                <code
-                    className={`
-            text-sm sm:text-base leading-relaxed text-white/80
-            ${hoverText}
-            transition-colors duration-200
-            break-all
-          `}
-                >
-                    {command}
-                </code>
-            </div>
-
-            {/* Copied feedback */}
-            <span
-                className={`
-          absolute top-6 right-6
-          text-[10px] uppercase tracking-[0.2em] font-bold
-          text-emerald-400 group-hover:text-zinc-700
-          transition-all duration-200
-          ${copied ? "opacity-100" : "opacity-0"}
-        `}
-                aria-live="polite"
+            {/* Terminal window */}
+            <button
+                type="button"
+                onClick={handleCopy}
+                aria-label="Copy install command"
+                className="group w-full text-left rounded-md overflow-hidden border border-white/10 bg-[#0c0c0c] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-                Copied
-            </span>
-        </button >
+                {/* Title bar */}
+                <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/10 bg-white/5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                </div>
+
+                {/* Body */}
+                <div className="relative px-5 py-5 font-mono text-sm sm:text-base">
+
+                    {/* Comment */}
+                    <p className="italic text-white/30 mb-2 select-none">
+                        # Works everywhere. Installs everything.
+                    </p>
+
+                    {/* Command */}
+                    <div className="flex items-start gap-2.5">
+                        <span className="text-amber-400 select-none shrink-0 leading-relaxed" aria-hidden="true">
+                            $
+                        </span>
+                        <code className="text-white/85 break-all leading-relaxed">
+                            {command}
+                        </code>
+                    </div>
+
+                    {/* Copy icon / feedback */}
+                    <div className="absolute bottom-4 right-4 flex items-center" aria-live="polite">
+                        {copied ? (
+                            <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-emerald-400">
+                                Copied
+                            </span>
+                        ) : (
+                            <svg
+                                width="15"
+                                height="15"
+                                viewBox="0 0 15 15"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="text-white/25 group-hover:text-white/50 transition-colors duration-200"
+                                aria-hidden="true"
+                            >
+                                <rect x="4.5" y="4.5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                                <path d="M2.5 9.5H2A1.5 1.5 0 0 1 .5 8V2A1.5 1.5 0 0 1 2 .5H8A1.5 1.5 0 0 1 9.5 2v.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                            </svg>
+                        )}
+                    </div>
+                </div>
+            </button>
+        </div>
     );
 }

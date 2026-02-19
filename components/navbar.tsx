@@ -3,7 +3,7 @@ import Link from "next/link";
 const links = [
   { label: "Network", href: "#" },
   { label: "Docs", href: "/docs" },
-  { label: "Contact", href: "#" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function Navbar({ active }: { active?: string }) {

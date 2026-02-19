@@ -2,6 +2,7 @@
 import { InteractiveWindow } from "@/components/interactive-window";
 import { InstallWindow } from "@/components/install-window";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   return (
@@ -50,21 +51,13 @@ export default function Home() {
               {/* ─── Bottom: Install ─── */}
               <InstallWindow
                 command="curl -fsSL https://b2alpha.io/install.sh | bash"
-                hoverBg="hover:bg-amber-400"
-                hoverBorder="hover:border-amber-400"
                 className="md:col-span-2"
               />
             </div>
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className="w-full border-t border-white/10 bg-black/50 backdrop-blur-sm shrink-0">
-          <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3 text-xs text-white/30 uppercase tracking-wider">
-            <span>&copy; 2026 b2alpha</span>
-            <span>Pre-launch</span>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );
