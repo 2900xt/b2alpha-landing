@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { Agent } from "./page";
+import type { Agent } from "./network-content";
 
 const AGENT_TYPES: Record<number, string> = {
   0: "Generic",
