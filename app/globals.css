@@ -9,6 +9,7 @@
     --muted-foreground: 0 0% 45.1%;
     --border: 0 0% 89.8%;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -21,8 +22,26 @@
   * {
     @apply border-border;
   }
-  html, body {
+
+  html,
+  body {
     @apply bg-black text-foreground;
     height: 100%;
+  }
+}
+
+@layer utilities {
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 }

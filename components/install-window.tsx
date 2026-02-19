@@ -63,7 +63,7 @@ export function InstallWindow({
           ${hoverText}
           transition-colors duration-200
         `}>
-                FOR AGENTS
+                FOR EVERYONE
             </span>
 
             {/* Command */}
