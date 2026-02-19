@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CLI_NAME="b2alpha"
+CLI_NAME="b2a"
 PACKAGE_NAME="b2alpha"
 DEFAULT_INDEX_URL="https://pypi.org/simple"
 INDEX_URL="${B2A_INDEX_URL:-$DEFAULT_INDEX_URL}"
