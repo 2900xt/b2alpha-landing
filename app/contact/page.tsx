@@ -83,9 +83,9 @@ export default function Contact() {
                   <div className="flex flex-col gap-1.5">
                     <label
                       htmlFor="message"
-                      className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40"
+                      className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 flex items-center gap-1"
                     >
-                      Message <span className="text-yellow-400">*</span>
+                      <span>Message</span> <div className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
                     </label>
                     <textarea
                       id="message"
@@ -104,7 +104,7 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="mt-2 w-full bg-white/5 border border-white/10 hover:border-yellow-400/40 hover:bg-yellow-400/5 text-white/70 hover:text-white text-xs uppercase tracking-wider font-bold py-2.5 rounded transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-yellow-400/60 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="mt-2 w-full bg-black/30 backdrop-blur-sm border border-white/10 hover:bg-yellow-400 hover:text-zinc-900 hover:border-yellow-400 text-white/70 text-xs uppercase tracking-wider font-bold py-2.5 rounded transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-yellow-400/60 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {status === "loading" ? "Sending..." : "Send Message"}
                   </button>
@@ -138,9 +138,9 @@ function Field({
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
-        className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40"
+        className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 flex items-center gap-1"
       >
-        {label} {required && <span className="text-yellow-400">*</span>}
+        <span>{label}</span> {required && <div className="w-1.5 h-1.5 rounded-full bg-yellow-400" />}
       </label>
       <input
         id={id}

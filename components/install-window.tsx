@@ -70,7 +70,7 @@ export function InstallWindow({
                     {/* Copy icon / feedback */}
                     <div className="absolute bottom-4 right-4 flex items-center" aria-live="polite">
                         {copied ? (
-                            <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-emerald-400">
+                            <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-yellow-400">
                                 Copied
                             </span>
                         ) : (
