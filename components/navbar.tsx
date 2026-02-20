@@ -10,19 +10,26 @@ export function Navbar({ active }: { active?: string }) {
   return (
     <nav className="w-full border-b border-white/10 bg-black/50 backdrop-blur-sm shrink-0">
       <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">
-        <Link href="/" className="text-white text-sm font-bold tracking-widest uppercase">
+        <Link href="/" className="text-white hover:text-emerald-400 transition-colors text-sm font-bold tracking-widest uppercase">
           b2alpha
         </Link>
         <div className="flex gap-6 text-xs uppercase tracking-wider">
-          {links.map(({ label, href }) => (
-            <Link
-              key={label}
-              href={href}
-              className={label === active ? "text-white/90" : "text-white/50 hover:text-white/80 transition-colors"}
-            >
-              {label}
-            </Link>
-          ))}
+          {links.map(({ label, href }) => {
+            const hoverColor =
+              label === "Network" ? "hover:text-cyan-400" :
+                label === "Docs" ? "hover:text-fuchsia-400" :
+                  label === "Contact" ? "hover:text-yellow-400" : "hover:text-white/80";
+
+            return (
+              <Link
+                key={label}
+                href={href}
+                className={label === active ? "text-white text-shadow-sm font-medium" : `text-white/50 ${hoverColor} transition-colors`}
+              >
+                {label}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>
