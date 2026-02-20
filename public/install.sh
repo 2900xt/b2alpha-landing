@@ -17,6 +17,14 @@ log() {
   printf '[b2alpha-install] %s\n' "$1"
 }
 
+cleanup_invalid_distributions() {
+  # Pip can leave temporary "~pkg" directories after interrupted installs.
+  # Remove these so users don't see repeated "Ignoring invalid distribution" warnings.
+  rm -rf "${VENV_DIR}"/lib/python*/site-packages/~setuptools* \
+         "${VENV_DIR}"/lib/python*/site-packages/~pip* \
+         "${VENV_DIR}"/lib/python*/site-packages/~wheel*
+}
+
 fail() {
   printf '[b2alpha-install] ERROR: %s\n' "$1" >&2
   exit 1
@@ -35,6 +43,7 @@ else
   log "pipx not found. Installing into isolated virtualenv at ${VENV_DIR}..."
   mkdir -p "${INSTALL_ROOT}"
   python3 -m venv "${VENV_DIR}"
+  cleanup_invalid_distributions
   "${VENV_DIR}/bin/python" -m pip install --upgrade pip >/dev/null
   if ! "${VENV_DIR}/bin/pip" install --upgrade --force-reinstall --no-cache-dir --index-url "${INDEX_URL}" "${INSTALL_TARGET}" >/dev/null; then
     fail "Could not install '${INSTALL_TARGET}'. If package is private/unpublished, set B2A_PACKAGE_URL to a wheel/tarball URL."
