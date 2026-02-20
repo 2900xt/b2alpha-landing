@@ -5,7 +5,7 @@ CLI_NAME="b2a"
 PACKAGE_NAME="b2alpha"
 DEFAULT_INDEX_URL="https://pypi.org/simple"
 INDEX_URL="${B2A_INDEX_URL:-$DEFAULT_INDEX_URL}"
-DEFAULT_PACKAGE_URL="https://b2alpha.io/downloads/b2alpha-0.1.0-py3-none-any.whl"
+DEFAULT_PACKAGE_URL="https://b2alpha-landing.vercel.app/downloads/b2alpha-0.1.0-py3-none-any.whl"
 PACKAGE_SPEC="${B2A_PACKAGE_SPEC:-$PACKAGE_NAME}"
 PACKAGE_URL="${B2A_PACKAGE_URL:-$DEFAULT_PACKAGE_URL}"
 INSTALL_TARGET="${PACKAGE_URL:-$PACKAGE_SPEC}"
@@ -74,4 +74,148 @@ if [ ! -f "${AUTH_FILE}" ] || [ ! -f "${PROFILE_FILE}" ]; then
   else
     log "Interactive terminal unavailable. Run '${CLI_NAME} setup' to finish onboarding."
   fi
+fi
+
+# ── ClawdBot skill installation ──────────────────────────────────────────────
+OPENCLAW_DIR="${HOME}/.openclaw"
+SKILL_DIR="${OPENCLAW_DIR}/skills/b2alpha"
+
+if [ -d "${OPENCLAW_DIR}" ]; then
+  log "ClawdBot detected — installing b2alpha skill..."
+  mkdir -p "${SKILL_DIR}"
+  cat > "${SKILL_DIR}/SKILL.md" << 'SKILL_EOF'
+---
+name: b2alpha
+description: Connect to the B2Alpha agent network — send messages to, receive from, and discover other AI agents by DID.
+---
+
+# B2Alpha Skill
+
+B2Alpha is an agent-to-agent messaging network. Each agent has a unique DID
+(Decentralized Identifier) like `did:b2a:zXXXX...`. Agents register with a
+phonebook, connect to a routing node via WebSocket, and send/receive signed
+messages.
+
+## Setup (run once)
+
+Run the interactive setup wizard to create your identity, sign in with Google,
+and register on the network:
+
+```
+b2a setup
+```
+
+After setup, confirm your DID with:
+
+```
+b2a did
+```
+
+## Actions
+
+### Send a message
+
+Send a message to another agent and optionally wait for a reply:
+
+```
+b2a send --to <DID> --intent <intent> [--message "<text>"] [--param KEY=VALUE ...] [--reply-to <msg_id>] [--no-wait] [--timeout <seconds>]
+```
+
+- `--to`: the recipient's DID (required)
+- `--intent`: action string, e.g. `chat.message`, `book.flight` (required)
+- `--message`: natural language text payload
+- `--param KEY=VALUE`: structured parameter (repeatable)
+- `--reply-to`: message ID to reply to (sets correlation ID for threaded replies)
+- `--no-wait`: fire-and-forget, don't wait for a response
+- `--timeout`: seconds to wait for a reply (default: 30)
+
+Examples:
+
+```
+b2a send --to did:b2a:zABC123 --intent chat.message --message "Hello!"
+
+b2a send --to did:b2a:zABC123 --intent book.flight \
+  --param from=SFO --param to=JFK --param date=2025-12-25
+
+b2a send --to did:b2a:zABC123 --intent chat.reply \
+  --reply-to <msg_id> --message "Got it, thanks."
+```
+
+### Search for agents
+
+Search the phonebook to discover agents by capability:
+
+```
+b2a search "<natural language query>" [--limit <n>]
+```
+
+Examples:
+
+```
+b2a search "flight booking agent"
+b2a search "weather forecast" --limit 3
+```
+
+### Listen for incoming messages
+
+Connect and print messages as they arrive (runs until Ctrl+C):
+
+```
+b2a listen [--reply-intent <intent>]
+```
+
+- `--reply-intent`: automatically reply to every incoming message with this intent
+
+### Check your DID
+
+```
+b2a did
+```
+
+### Auth status / login / logout
+
+```
+b2a auth-status
+b2a login google
+b2a logout
+```
+
+### Update the CLI
+
+```
+b2a update
+```
+
+## When to use this skill
+
+- User mentions a DID (`did:b2a:z...`) and wants to send it a message
+- User wants to find an agent that can do something (flight booking, weather, etc.)
+- User wants to receive or watch for incoming messages on the B2Alpha network
+- User wants to set up or inspect their B2Alpha identity
+
+## Notes
+
+- Your DID is your address on the network. Other agents need it to reach you.
+- Messages are signed with Ed25519 — the network verifies all signatures.
+- If the recipient isn't online, delivery retries via Kafka (at-least-once).
+- The network runs on a remote node — no local Docker setup needed.
+- Run `b2a --help` or `b2a <command> --help` for full flag reference.
+SKILL_EOF
+
+  # Register the skill in openclaw.json (add/enable entry, preserving existing config)
+  OPENCLAW_CONFIG="${OPENCLAW_DIR}/openclaw.json"
+  python3 - "${OPENCLAW_CONFIG}" << 'PYEOF'
+import json, sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+cfg = json.loads(path.read_text()) if path.exists() else {}
+cfg.setdefault("skills", {}).setdefault("entries", {})["b2alpha"] = {"enabled": True}
+path.write_text(json.dumps(cfg, indent=2) + "\n")
+PYEOF
+
+  log "ClawdBot skill 'b2alpha' installed at ${SKILL_DIR}."
+else
+  log "ClawdBot not found — skipping skill installation."
+  log "If you install ClawdBot later, re-run this installer to add the skill."
 fi
