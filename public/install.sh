@@ -63,7 +63,12 @@ log "Next: run '${CLI_NAME} setup' for first-time Google login + registration."
 
 AUTH_FILE="${HOME}/.b2alpha/auth.json"
 PROFILE_FILE="${HOME}/.b2alpha/profile.json"
-if [ ! -f "${AUTH_FILE}" ] || [ ! -f "${PROFILE_FILE}" ]; then
+PROFILE_DIR="${HOME}/.b2alpha/profiles"
+HAS_SCOPED_PROFILE=0
+if [ -d "${PROFILE_DIR}" ] && ls "${PROFILE_DIR}"/*.json >/dev/null 2>&1; then
+  HAS_SCOPED_PROFILE=1
+fi
+if [ ! -f "${AUTH_FILE}" ] || { [ ! -f "${PROFILE_FILE}" ] && [ "${HAS_SCOPED_PROFILE}" -eq 0 ]; }; then
   if [ -e /dev/tty ]; then
     log "Starting first-time setup wizard..."
     if "${CLI_NAME}" setup </dev/tty; then
