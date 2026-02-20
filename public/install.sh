@@ -5,7 +5,7 @@ CLI_NAME="b2a"
 PACKAGE_NAME="b2alpha"
 DEFAULT_INDEX_URL="https://pypi.org/simple"
 INDEX_URL="${B2A_INDEX_URL:-$DEFAULT_INDEX_URL}"
-DEFAULT_PACKAGE_URL="https://b2alpha.io/downloads/b2alpha-0.1.0-py3-none-any.whl"
+DEFAULT_PACKAGE_URL="https://b2alpha.io/downloads/b2alpha-0.1.1-py3-none-any.whl"
 PACKAGE_SPEC="${B2A_PACKAGE_SPEC:-$PACKAGE_NAME}"
 PACKAGE_URL="${B2A_PACKAGE_URL:-$DEFAULT_PACKAGE_URL}"
 INSTALL_TARGET="${PACKAGE_URL:-$PACKAGE_SPEC}"
@@ -28,7 +28,7 @@ fi
 
 if command -v pipx >/dev/null 2>&1; then
   log "Installing via pipx..."
-  if ! pipx install --force --pip-args="--index-url ${INDEX_URL}" "${INSTALL_TARGET}" >/dev/null; then
+  if ! pipx install --force --pip-args="--index-url ${INDEX_URL} --no-cache-dir" "${INSTALL_TARGET}" >/dev/null; then
     fail "Could not install '${INSTALL_TARGET}'. If package is private/unpublished, set B2A_PACKAGE_URL to a wheel/tarball URL."
   fi
 else
@@ -36,7 +36,7 @@ else
   mkdir -p "${INSTALL_ROOT}"
   python3 -m venv "${VENV_DIR}"
   "${VENV_DIR}/bin/python" -m pip install --upgrade pip >/dev/null
-  if ! "${VENV_DIR}/bin/pip" install --upgrade --index-url "${INDEX_URL}" "${INSTALL_TARGET}" >/dev/null; then
+  if ! "${VENV_DIR}/bin/pip" install --upgrade --force-reinstall --no-cache-dir --index-url "${INDEX_URL}" "${INSTALL_TARGET}" >/dev/null; then
     fail "Could not install '${INSTALL_TARGET}'. If package is private/unpublished, set B2A_PACKAGE_URL to a wheel/tarball URL."
   fi
   mkdir -p "${BIN_DIR}"
