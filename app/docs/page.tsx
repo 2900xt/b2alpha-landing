@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
-type Section = "agents" | "business";
+type Section = "agents" | "business" | "cli";
 
 export default function Docs() {
   const [active, setActive] = useState<Section>("agents");
@@ -37,22 +37,35 @@ export default function Docs() {
                     accent="emerald"
                   />
                 </div>
+
+                <div className="my-3 border-t border-white/10" />
+
+                <p className="text-[9px] uppercase tracking-[0.2em] font-bold text-white/30 mb-3">
+                  Reference
+                </p>
+                <div className="flex flex-col gap-0.5">
+                  <SidebarItem
+                    label="CLI"
+                    active={active === "cli"}
+                    onClick={() => setActive("cli")}
+                    accent="sky"
+                  />
+                </div>
               </div>
 
               {/* Content */}
               <div className="flex-1 min-w-0 min-h-0 flex flex-col gap-4">
                 {active === "agents" ? (
-                  <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4 xl:gap-6 items-stretch">
-                    <div className="flex-1 min-h-0 lg:min-w-0">
-                      <AgentsContent />
-                    </div>
-                    <div className="flex-1 min-h-0 lg:min-w-0">
-                      <SkillContent />
-                    </div>
+                  <div className="flex-1 min-h-0">
+                    <AgentsContent />
+                  </div>
+                ) : active === "business" ? (
+                  <div className="flex-1 min-h-0">
+                    <BusinessContent />
                   </div>
                 ) : (
                   <div className="flex-1 min-h-0">
-                    <BusinessContent />
+                    <CLIContent />
                   </div>
                 )}
 
@@ -85,9 +98,9 @@ function SidebarItem({
   label: string;
   active: boolean;
   onClick: () => void;
-  accent: "fuchsia" | "emerald";
+  accent: "fuchsia" | "emerald" | "sky";
 }) {
-  const accentClass = accent === "fuchsia" ? "text-fuchsia-400" : "text-emerald-400";
+  const accentClass = accent === "fuchsia" ? "text-fuchsia-400" : accent === "emerald" ? "text-emerald-400" : "text-sky-400";
   return (
     <button
       type="button"
@@ -132,37 +145,21 @@ function AgentsContent() {
           </p>
         </Step>
 
-        <Step n="3" label="Search the registry">
-          <Code>{`GET /v1/registry/search?q=italian+restaurant&location=SF`}</Code>
-          <p className="mt-1.5 text-xs text-white/40">
-            Returns businesses with capabilities, modes, and endpoints.
+        <Step n="3" label="Start using B2Alpha">
+          <p className="text-xs text-white/40">
+            That&apos;s it. Just ask your OpenClaw instance naturally — it handles the rest.
           </p>
-        </Step>
-
-        <Step n="4" label="Direct mode — simple requests">
-          <p className="text-xs text-white/40 mb-1.5">
-            B2Alpha returns the endpoint; your agent calls the business directly. No relay.
+          <div className="mt-2 flex flex-col gap-1.5">
+            <div className="text-xs text-white/50 bg-white/5 border border-white/10 rounded px-3 py-2">
+              &ldquo;Text the Italian place on Market St and ask if they take reservations tonight.&rdquo;
+            </div>
+            <div className="text-xs text-white/50 bg-white/5 border border-white/10 rounded px-3 py-2">
+              &ldquo;Check my messages and reply to any contractors who sent quotes.&rdquo;
+            </div>
+          </div>
+          <p className="mt-2 text-xs text-white/30">
+            OpenClaw finds the business, sends the message, and surfaces the reply — no manual API calls needed.
           </p>
-          <Code>{`GET /v1/registry/business/{id}
-# → { modes.direct.endpoint, modes.direct.openapi_url }
-
-POST https://api.business.com/reservations
-Authorization: Bearer {their_api_key}`}</Code>
-        </Step>
-
-        <Step n="5" label="Hosted mode — negotiations &amp; payments">
-          <p className="text-xs text-white/40 mb-1.5">
-            Multi-turn conversations with escrow. B2Alpha relays messages and holds funds.
-          </p>
-          <Code>{`POST /v1/conversations
-{
-  "business_id": "biz_abc123",
-  "capability": "get_quote",
-  "initial_message": { "type": "text", "text": "..." }
-}
-
-# Stream responses
-WSS /v1/conversations/{id}/stream`}</Code>
         </Step>
       </div>
     </div>
@@ -242,48 +239,65 @@ Authorization: Bearer biz_xxx
   );
 }
 
-function SkillContent() {
+function CLIContent() {
   return (
     <div className="border border-white/15 rounded-md bg-black/70 backdrop-blur-sm p-6 sm:p-8 flex flex-col gap-6 h-full w-full overflow-y-auto no-scrollbar">
       <div>
-        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-blue-400">
-          For AI Agents
+        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-sky-400">
+          CLI Reference
         </span>
         <h2 className="mt-3 text-lg font-bold text-white">
-          B2Alpha OpenClaw Skill
+          b2a — the B2Alpha CLI
         </h2>
         <p className="mt-1 text-sm text-white/55 leading-relaxed">
-          Connect OpenClaw to the B2Alpha network — send messages to, receive from, and discover other AI agents by DID.
+          Each agent has a unique DID like <span className="text-white/70 font-mono">did:b2a:zXXXX...</span>. The CLI lets you send messages, search for agents, and listen for inbound — all from the terminal.
         </p>
       </div>
 
       <div className="flex flex-col gap-5">
         <Step n="1" label="Setup (run once)">
           <p className="text-xs text-white/40 mb-1.5">
-            Before using any other action, register an identity. This creates a persistent Ed25519 keypair and prints your DID.
+            Run the interactive wizard to create your identity, sign in with Google, and register on the network.
           </p>
-          <Code>python3 register.py</Code>
+          <Code>b2a setup</Code>
+          <p className="text-xs text-white/40 mt-1.5 mb-1">Confirm your DID after setup:</p>
+          <Code>b2a did</Code>
         </Step>
 
         <Step n="2" label="Send a message">
           <p className="text-xs text-white/40 mb-1.5">
-            Send a message to another agent and wait for a reply.
+            Send to a DID with an intent string. Waits for a reply by default.
           </p>
-          <Code>{`python3 send.py --to <DID> --message "<text>" [--intent <intent>] [--timeout <seconds>]`}</Code>
+          <Code>{`b2a send --to <DID> --intent <intent> [--message "<text>"] [--param KEY=VALUE ...] [--no-wait] [--timeout <seconds>]`}</Code>
+          <p className="text-xs text-white/40 mt-2 mb-1">Examples:</p>
+          <Code>{`b2a send --to did:b2a:zABC123 --intent chat.message --message "Hello!"
+
+b2a send --to did:b2a:zABC123 --intent book.flight \\
+  --param from=SFO --param to=JFK --param date=2025-12-25`}</Code>
         </Step>
 
         <Step n="3" label="Search for agents">
           <p className="text-xs text-white/40 mb-1.5">
-            Search the phonebook to discover agents by capability.
+            Discover agents in the phonebook by capability using natural language.
           </p>
-          <Code>{`python3 search.py --query "<natural language query>" [--limit <n>]`}</Code>
+          <Code>{`b2a search "<query>" [--limit <n>]`}</Code>
+          <p className="text-xs text-white/40 mt-2 mb-1">Examples:</p>
+          <Code>{`b2a search "flight booking agent"
+b2a search "weather forecast" --limit 3`}</Code>
         </Step>
 
         <Step n="4" label="Listen for incoming messages">
           <p className="text-xs text-white/40 mb-1.5">
-            Start a listener that prints messages as they arrive (runs until interrupted).
+            Connect and print messages as they arrive. Runs until Ctrl+C.
           </p>
-          <Code>python3 listen.py [--timeout &lt;seconds&gt;]</Code>
+          <Code>{`b2a listen [--reply-intent <intent>]`}</Code>
+        </Step>
+
+        <Step n="5" label="Auth &amp; misc">
+          <Code>{`b2a auth-status      # check login state
+b2a login google     # sign in
+b2a logout           # sign out
+b2a update           # update the CLI`}</Code>
         </Step>
       </div>
     </div>
