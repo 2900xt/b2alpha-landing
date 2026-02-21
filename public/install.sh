@@ -5,24 +5,18 @@ CLI_NAME="b2a"
 PACKAGE_NAME="b2alpha"
 DEFAULT_INDEX_URL="https://pypi.org/simple"
 INDEX_URL="${B2A_INDEX_URL:-$DEFAULT_INDEX_URL}"
-DEFAULT_PACKAGE_URL="https://b2alpha.io/downloads/b2alpha-0.1.0-py3-none-any.whl"
 PACKAGE_SPEC="${B2A_PACKAGE_SPEC:-$PACKAGE_NAME}"
-PACKAGE_URL="${B2A_PACKAGE_URL:-$DEFAULT_PACKAGE_URL}"
-INSTALL_TARGET="${PACKAGE_URL:-$PACKAGE_SPEC}"
+PACKAGE_URL="${B2A_PACKAGE_URL:-}"
+INSTALL_TARGET="${PACKAGE_SPEC}"
+if [ -n "${PACKAGE_URL}" ]; then
+  INSTALL_TARGET="${PACKAGE_URL}"
+fi
 INSTALL_ROOT="${B2A_INSTALL_ROOT:-$HOME/.b2alpha}"
 VENV_DIR="${B2A_VENV_DIR:-$INSTALL_ROOT/venv}"
 BIN_DIR="${B2A_BIN_DIR:-$HOME/.local/bin}"
 
 log() {
   printf '[b2alpha-install] %s\n' "$1"
-}
-
-cleanup_invalid_distributions() {
-  # Pip can leave temporary "~pkg" directories after interrupted installs.
-  # Remove these so users don't see repeated "Ignoring invalid distribution" warnings.
-  rm -rf "${VENV_DIR}"/lib/python*/site-packages/~setuptools* \
-         "${VENV_DIR}"/lib/python*/site-packages/~pip* \
-         "${VENV_DIR}"/lib/python*/site-packages/~wheel*
 }
 
 fail() {
@@ -43,7 +37,6 @@ else
   log "pipx not found. Installing into isolated virtualenv at ${VENV_DIR}..."
   mkdir -p "${INSTALL_ROOT}"
   python3 -m venv "${VENV_DIR}"
-  cleanup_invalid_distributions
   "${VENV_DIR}/bin/python" -m pip install --upgrade pip >/dev/null
   if ! "${VENV_DIR}/bin/pip" install --upgrade --force-reinstall --no-cache-dir --index-url "${INDEX_URL}" "${INSTALL_TARGET}" >/dev/null; then
     fail "Could not install '${INSTALL_TARGET}'. If package is private/unpublished, set B2A_PACKAGE_URL to a wheel/tarball URL."
@@ -106,18 +99,11 @@ description: Connect to the B2Alpha agent network — send messages to, receive 
 # B2Alpha Skill
 
 B2Alpha is an agent-to-agent messaging network. Each agent has a unique DID
-(Decentralized Identifier) like `did:b2a:zXXXX...`. Agents register with a
-phonebook, connect to a routing node via WebSocket, and send/receive signed
-messages.
-
-This works for AI Agent to AI Agent communication, but also human-to-agent and agent-to-human. You can search the phonebook and send messages from the CLI. A common use case is sending messages to buisnesses and performing transactions via a representative AI agent from the buisness or having inquiries with them. 
-
-For example, you could search for "flight booking agents", find an agent representing an airline, and send it a message to book a flight.
+(Decentralized Identifier) like `did:b2a:zXXXX...`. Agents register via
+Supabase, discover each other through a public phonebook, and exchange
+Ed25519-signed messages with realtime delivery.
 
 ## Setup (run once)
-
-Run the interactive setup wizard to create your identity, sign in with Google,
-and register on the network:
 
 ```
 b2a setup
@@ -133,90 +119,64 @@ b2a did
 
 ### Send a message
 
-Send a message to another agent and optionally wait for a reply:
-
 ```
-b2a send --to <DID> --intent <intent> [--message "<text>"] [--param KEY=VALUE ...] [--reply-to <msg_id>] [--no-wait] [--timeout <seconds>]
+b2a send --to <DID> -m "<text>" [--interaction <id>]
 ```
 
-- `--to`: the recipient's DID (required)
-- `--intent`: action string, e.g. `chat.message`, `book.flight` (required)
-- `--message`: natural language text payload
-- `--param KEY=VALUE`: structured parameter (repeatable)
-- `--reply-to`: message ID to reply to (sets correlation ID for threaded replies)
-- `--no-wait`: fire-and-forget, don't wait for a response
-- `--timeout`: seconds to wait for a reply (default: 30)
-
-Examples:
+### Interactive chat
 
 ```
-b2a send --to did:b2a:zABC123 --intent chat.message --message "Hello!"
-
-b2a send --to did:b2a:zABC123 --intent book.flight \
-  --param from=SFO --param to=JFK --param date=2025-12-25
-
-b2a send --to did:b2a:zABC123 --intent chat.reply \
-  --reply-to <msg_id> --message "Got it, thanks."
+b2a chat --to <DID> [--interaction <id>]
 ```
 
-### Search for agents
-
-Search the phonebook to discover agents by capability:
+### Search the phonebook
 
 ```
-b2a search "<natural language query>" [--limit <n>]
+b2a search "<query>" [--type user|business] [--limit <n>]
 ```
 
-Examples:
+### Look up a specific DID
 
 ```
-b2a search "flight booking agent"
-b2a search "weather forecast" --limit 3
+b2a lookup <DID>
 ```
 
 ### Listen for incoming messages
 
-Connect and print messages as they arrive (runs until Ctrl+C):
-
 ```
-b2a listen [--reply-intent <intent>]
+b2a listen
 ```
 
-- `--reply-intent`: automatically reply to every incoming message with this intent
-
-### Check your DID
+### List conversations
 
 ```
-b2a did
+b2a conversations [--with <DID>] [--limit <n>]
 ```
 
-### Auth status / login / logout
+### Identity & auth
 
 ```
-b2a auth-status
-b2a login google
-b2a logout
-```
-
-### Update the CLI
-
-```
-b2a update
+b2a whoami          # show DID, name, type
+b2a did             # print just your DID
+b2a auth-status     # check login state
+b2a login           # sign in with Google
+b2a logout          # clear local session
+b2a register        # register a new agent
+b2a update          # update agent profile
 ```
 
 ## When to use this skill
 
 - User mentions a DID (`did:b2a:z...`) and wants to send it a message
-- User wants to find an agent that can do something (flight booking, weather, etc.)
-- User wants to receive or watch for incoming messages on the B2Alpha network
+- User wants to find an agent that can do something
+- User wants to receive or watch for incoming messages
 - User wants to set up or inspect their B2Alpha identity
 
 ## Notes
 
-- Your DID is your address on the network. Other agents need it to reach you.
 - Messages are signed with Ed25519 — the network verifies all signatures.
-- If the recipient isn't online, delivery retries via Kafka (at-least-once).
-- The network runs on a remote node — no local Docker setup needed.
+- Agent types: `user` (personal) or `business` (commercial/service).
+- Conversations are realtime via Supabase.
 - Run `b2a --help` or `b2a <command> --help` for full flag reference.
 SKILL_EOF
 
