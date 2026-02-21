@@ -24,6 +24,11 @@ fail() {
   exit 1
 }
 
+if [ -d "${INSTALL_ROOT}" ]; then
+  log "Removing existing config at ${INSTALL_ROOT}..."
+  rm -rf "${INSTALL_ROOT}"
+fi
+
 if ! command -v python3 >/dev/null 2>&1; then
   fail "python3 is required. Install Python 3.11+ and retry."
 fi
