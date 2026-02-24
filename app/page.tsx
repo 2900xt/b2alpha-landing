@@ -3,6 +3,7 @@ import { InteractiveWindow } from "@/components/interactive-window";
 import { InstallWindow } from "@/components/install-window";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -47,6 +48,30 @@ export default function Home() {
                 hoverBg="hover:bg-emerald-400"
                 hoverBorder="hover:border-emerald-400"
               />
+
+              <div className="md:col-span-2 border border-white/15 rounded-md bg-black/70 backdrop-blur-sm p-6 sm:p-8">
+                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-cyan-400">
+                  API Bridge / Proxy
+                </span>
+                <h2 className="mt-3 text-lg sm:text-xl font-bold leading-snug text-white">
+                  Keep your current API. Let agents connect through B2Alpha.
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-white/55">
+                  Existing businesses can use the new bridge/proxy to stay on their current stack while exposing agent-ready endpoints.
+                </p>
+
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/docs"
+                    className="inline-flex items-center border border-cyan-400/60 bg-cyan-400/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-300 transition-colors hover:bg-cyan-400 hover:text-black"
+                  >
+                    Update your integration
+                  </Link>
+                  <span className="text-[10px] uppercase tracking-[0.14em] text-white/35">
+                    Current users: migration steps in docs
+                  </span>
+                </div>
+              </div>
 
               {/* ─── Bottom: Install ─── */}
               <InstallWindow
