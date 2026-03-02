@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import Link from "next/link";
 
 export const metadata = { title: "Privacy Policy — b2alpha" };
 
@@ -88,7 +89,12 @@ export default function Privacy() {
 
               <Section title="Contact">
                 <p>For privacy-related questions: <a href="mailto:privacy@b2alpha.io" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">privacy@b2alpha.io</a></p>
-                <p>For general questions: <a href="/contact" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">b2alpha.io/contact</a></p>
+                <p>
+                  For general questions:{" "}
+                  <Link href="/contact" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">
+                    b2alpha.io/contact
+                  </Link>
+                </p>
               </Section>
             </div>
 
