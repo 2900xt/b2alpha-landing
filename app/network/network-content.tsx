@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { unstable_noStore as noStore } from "next/cache";
 import { AgentList } from "./agent-list";
 
 export type Agent = {
@@ -14,6 +15,8 @@ export type Agent = {
 };
 
 export async function NetworkContent() {
+  noStore();
+
   const { data: agents, error } = await supabase
     .from("agents")
     .select("id, did, display_name, agent_type, status, region, capabilities, last_seen_at, message_count")
