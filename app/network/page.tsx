@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import { NetworkContent } from "./network-content";
 
 export const metadata = { title: "Network — b2alpha" };
+export const dynamic = "force-dynamic";
 
 export default function Network() {
   return (
