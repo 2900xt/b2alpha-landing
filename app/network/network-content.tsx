@@ -202,19 +202,6 @@ export function NetworkContent() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
-                setSort("recent");
-                setError(null);
-              }}
-              className={`px-2 py-1 rounded border transition-colors ${
-                sort === "recent"
-                  ? "border-cyan-400/50 text-cyan-300 bg-cyan-400/10"
-                  : "border-white/10 text-white/40 hover:text-white/70"
-              }`}
-            >
-              Most Recent
-            </button>
-            <button
-              onClick={() => {
                 setLocation((current) => current.status === "ready" ? current : { status: "idle" });
                 setSort("distance");
                 setError(null);
