@@ -15,7 +15,7 @@ export type Agent = {
   distance_miles?: number | null;
 };
 
-type SortMode = "recent" | "distance";
+type SortMode = "popular" | "distance";
 
 type NetworkResponse = {
   agents: Agent[];
@@ -51,6 +51,8 @@ const buildLookupUrl = (input: {
     url.searchParams.set("sort", "distance");
     url.searchParams.set("lat", String(input.location.lat));
     url.searchParams.set("lng", String(input.location.lng));
+  } else {
+    url.searchParams.set("sort", "popular");
   }
 
   return url.toString();
@@ -60,7 +62,7 @@ const locationLabel = (location: LocationState): string | null => {
   if (location.status === "ready") return "Sorting by distance from your location";
   if (location.status === "loading") return "Getting your location...";
   if (location.status === "error") return location.message;
-  return null;
+  return "Ranking by popularity from public network activity";
 };
 
 export function NetworkContent() {
@@ -71,7 +73,7 @@ export function NetworkContent() {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const [offset, setOffset] = useState(0);
-  const [sort, setSort] = useState<SortMode>("recent");
+  const [sort, setSort] = useState<SortMode>("popular");
   const [location, setLocation] = useState<LocationState>({ status: "idle" });
 
   useEffect(() => {
@@ -200,6 +202,19 @@ export function NetworkContent() {
 
         <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] text-white/35">
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setSort("popular");
+                setError(null);
+              }}
+              className={`px-2 py-1 rounded border transition-colors ${
+                sort === "popular"
+                  ? "border-cyan-400/50 text-cyan-300 bg-cyan-400/10"
+                  : "border-white/10 text-white/40 hover:text-white/70"
+              }`}
+            >
+              Most Popular
+            </button>
             <button
               onClick={() => {
                 setLocation((current) => current.status === "ready" ? current : { status: "idle" });
