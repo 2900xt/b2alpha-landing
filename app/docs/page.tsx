@@ -14,12 +14,12 @@ export default function Docs() {
       <div className="fixed inset-0 z-10 flex flex-col">
         <Navbar active="Docs" />
 
-        <main className="flex-1 overflow-hidden min-h-0 flex flex-col">
+        <main className="flex-1 overflow-y-auto no-scrollbar min-h-0 flex flex-col">
           <div className="flex-1 min-h-0 flex flex-col px-4 sm:px-6 py-8 sm:py-12">
-            <div className="max-w-7xl mx-auto w-full flex-1 min-h-0 flex gap-4 xl:gap-6 items-stretch">
+            <div className="max-w-7xl mx-auto w-full flex-1 min-h-0 flex flex-col lg:flex-row gap-4 xl:gap-6 items-stretch">
 
               {/* Sidebar */}
-              <div className="w-44 shrink-0 border border-white/15 rounded-md bg-black/70 backdrop-blur-sm p-4 sticky top-0 self-start">
+              <div className="w-full lg:w-44 shrink-0 border border-white/15 rounded-md bg-black/70 backdrop-blur-sm p-4 lg:sticky lg:top-0 self-start">
                 <p className="text-[9px] uppercase tracking-[0.2em] font-bold text-white/30 mb-3">
                   Quick Setup
                 </p>

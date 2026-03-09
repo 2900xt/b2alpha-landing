@@ -63,7 +63,11 @@ export default function Contact() {
               </p>
 
               {status === "success" ? (
-                <div className="mt-8 border border-white/10 rounded-md bg-white/5 px-5 py-6 text-center">
+                <div
+                  className="mt-8 border border-white/10 rounded-md bg-white/5 px-5 py-6 text-center"
+                  role="status"
+                  aria-live="polite"
+                >
                   <p className="text-sm font-bold text-white">Message sent.</p>
                   <p className="mt-1 text-xs text-white/50">We&apos;ll get back to you soon.</p>
                   <button
@@ -98,7 +102,9 @@ export default function Contact() {
                   </div>
 
                   {status === "error" && (
-                    <p className="text-xs text-red-400">{errorMsg}</p>
+                    <p className="text-xs text-red-400" role="alert">
+                      {errorMsg}
+                    </p>
                   )}
 
                   <button

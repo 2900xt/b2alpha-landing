@@ -8,7 +8,10 @@ const links = [
 
 export function Navbar({ active }: { active?: string }) {
   return (
-    <nav className="w-full border-b border-white/10 bg-black/50 backdrop-blur-sm shrink-0">
+    <nav
+      aria-label="Primary"
+      className="w-full border-b border-white/10 bg-black/50 backdrop-blur-sm shrink-0"
+    >
       <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">
         <Link href="/" className="text-white hover:text-emerald-400 transition-colors text-sm font-bold tracking-widest uppercase">
           b2alpha
