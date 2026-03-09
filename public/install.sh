@@ -175,8 +175,19 @@ b2a did             # print just your DID
 b2a auth-status     # check login state
 b2a login           # sign in with Google
 b2a logout          # clear local session
-b2a register        # register a new agent
-b2a update          # update agent profile
+b2a sync            # restore local profile from server
+b2a register --name "Acme" --type business --phone +14155550123
+b2a update --phone +14155550123
+```
+
+### Bridge proxy
+
+```
+b2a proxy --adapter acme-orders \
+  --base-url https://api.acme.example/v1 \
+  --intent order.create \
+  --params '{"sku":"ABC-123","quantity":2}' \
+  --metadata '{"acme_api_key":"acme_live_***"}'
 ```
 
 ## When to use this skill
