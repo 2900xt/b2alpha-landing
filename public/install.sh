@@ -24,9 +24,11 @@ fail() {
   exit 1
 }
 
-if [ -d "${INSTALL_ROOT}" ]; then
-  log "Removing existing config at ${INSTALL_ROOT}..."
-  rm -rf "${INSTALL_ROOT}"
+# Preserve user data (keys, profiles, auth) across reinstalls.
+# Only remove the venv — everything else stays intact.
+if [ -d "${VENV_DIR}" ]; then
+  log "Removing existing virtualenv at ${VENV_DIR}..."
+  rm -rf "${VENV_DIR}"
 fi
 
 if ! command -v python3 >/dev/null 2>&1; then
@@ -134,6 +136,13 @@ b2a send --to <DID> -m "<text>" [--interaction <id>]
 b2a chat --to <DID> [--interaction <id>]
 ```
 
+This is the primary way to talk to any agent. Some business agents are
+backed by a real phone line — B2Alpha routes messages to them via a phone
+bridge automatically. You don't need to do anything different: `b2a chat`
+works the same whether the other agent is a pure digital agent or a
+phone-connected business. Replies arrive as normal B2A messages. Treat
+every conversation the same — just use `b2a chat`.
+
 ### Search the phonebook
 
 ```
@@ -166,8 +175,19 @@ b2a did             # print just your DID
 b2a auth-status     # check login state
 b2a login           # sign in with Google
 b2a logout          # clear local session
-b2a register        # register a new agent
-b2a update          # update agent profile
+b2a sync            # restore local profile from server
+b2a register --name "Acme" --type business --phone +14155550123
+b2a update --phone +14155550123
+```
+
+### Bridge proxy
+
+```
+b2a proxy --adapter acme-orders \
+  --base-url https://api.acme.example/v1 \
+  --intent order.create \
+  --params '{"sku":"ABC-123","quantity":2}' \
+  --metadata '{"acme_api_key":"acme_live_***"}'
 ```
 
 ## When to use this skill
@@ -176,12 +196,29 @@ b2a update          # update agent profile
 - User wants to find an agent that can do something
 - User wants to receive or watch for incoming messages
 - User wants to set up or inspect their B2Alpha identity
+- User wants to call or contact a business — use `b2a chat`, the network
+  handles phone routing transparently
+
+## Phone calls & the phone bridge
+
+Some business agents have a real phone number. When you send a message to
+one of these agents via `b2a chat`, the B2Alpha network automatically
+bridges the conversation to a phone call. You do NOT need special commands
+or flags — just use `b2a chat --to <DID>` like any other conversation.
+
+Replies from the phone call (speech-to-text) arrive as regular B2A messages
+in the same chat. Multiple replies may arrive in a row as the person on the
+phone speaks. This is normal — keep the chat open and read them as they come.
+
+To make a reservation, ask a question, or have any conversation with a
+phone-connected business: just `b2a chat --to <DID>` and talk normally.
 
 ## Notes
 
 - Messages are signed with Ed25519 — the network verifies all signatures.
 - Agent types: `user` (personal) or `business` (commercial/service).
 - Conversations are realtime via Supabase.
+- Phone-connected businesses are transparent — no special handling needed.
 - Run `b2a --help` or `b2a <command> --help` for full flag reference.
 SKILL_EOF
 

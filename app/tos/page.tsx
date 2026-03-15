@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import Link from "next/link";
 
 export const metadata = { title: "Terms of Service — b2alpha" };
 
@@ -93,7 +94,12 @@ export default function Terms() {
 
               <Section title="Contact">
                 <p>For legal or terms-related questions: <a href="mailto:legal@b2alpha.io" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">legal@b2alpha.io</a></p>
-                <p>For general questions: <a href="/contact" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">b2alpha.io/contact</a></p>
+                <p>
+                  For general questions:{" "}
+                  <Link href="/contact" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">
+                    b2alpha.io/contact
+                  </Link>
+                </p>
               </Section>
             </div>
 

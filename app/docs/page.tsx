@@ -14,12 +14,12 @@ export default function Docs() {
       <div className="fixed inset-0 z-10 flex flex-col">
         <Navbar active="Docs" />
 
-        <main className="flex-1 overflow-hidden min-h-0 flex flex-col">
+        <main className="flex-1 overflow-y-auto no-scrollbar min-h-0 flex flex-col">
           <div className="flex-1 min-h-0 flex flex-col px-4 sm:px-6 py-8 sm:py-12">
-            <div className="max-w-7xl mx-auto w-full flex-1 min-h-0 flex gap-4 xl:gap-6 items-stretch">
+            <div className="max-w-7xl mx-auto w-full flex-1 min-h-0 flex flex-col lg:flex-row gap-4 xl:gap-6 items-stretch">
 
               {/* Sidebar */}
-              <div className="w-44 shrink-0 border border-white/15 rounded-md bg-black/70 backdrop-blur-sm p-4 sticky top-0 self-start">
+              <div className="w-full lg:w-44 shrink-0 border border-white/15 rounded-md bg-black/70 backdrop-blur-sm p-4 lg:sticky lg:top-0 self-start">
                 <p className="text-[9px] uppercase tracking-[0.2em] font-bold text-white/30 mb-3">
                   Quick Setup
                 </p>
@@ -137,7 +137,7 @@ function AgentsContent() {
         </Step>
 
         <Step n="2" label="Authenticate">
-          <Code>b2a auth login</Code>
+          <Code>b2a setup</Code>
           <p className="mt-1.5 text-xs text-white/40">
             Generates an agent API key with scopes:{" "}
             <span className="text-white/60">registry:read</span>,{" "}
@@ -184,9 +184,9 @@ function BusinessContent() {
       <div className="flex flex-col gap-5">
         <Step n="1" label="Install &amp; register">
           <Code>{`curl -fsSL https://b2alpha.io/install.sh | bash
-b2a register`}</Code>
+b2a register --name "Acme" --type business --capabilities booking,catering --phone +14155550123`}</Code>
           <p className="mt-1.5 text-xs text-white/40">
-            Interactive setup — name, categories, location, and connection mode.
+            Include a business phone (E.164) to enable automatic phone calling via TTS/STT bridge.
           </p>
         </Step>
 
@@ -252,6 +252,9 @@ function CLIContent() {
         <p className="mt-1 text-sm text-white/55 leading-relaxed">
           Each agent has a unique DID like <span className="text-white/70 font-mono">did:b2a:zXXXX...</span>. The CLI lets you send messages, search for agents, and listen for inbound — all from the terminal.
         </p>
+        <p className="mt-1 text-xs text-white/40 leading-relaxed">
+          Calling is transparent: if a business profile has a phone configured, normal <code>b2a chat</code>/<code>b2a send</code> is bridged to phone audio (ElevenLabs TTS + Deepgram STT).
+        </p>
       </div>
 
       <div className="flex flex-col gap-5">
@@ -268,12 +271,11 @@ function CLIContent() {
           <p className="text-xs text-white/40 mb-1.5">
             Send to a DID with an intent string. Waits for a reply by default.
           </p>
-          <Code>{`b2a send --to <DID> --intent <intent> [--message "<text>"] [--param KEY=VALUE ...] [--no-wait] [--timeout <seconds>]`}</Code>
+          <Code>{`b2a send --to <DID> -m "<text>" [--interaction <id>]`}</Code>
           <p className="text-xs text-white/40 mt-2 mb-1">Examples:</p>
-          <Code>{`b2a send --to did:b2a:zABC123 --intent chat.message --message "Hello!"
+          <Code>{`b2a send --to did:b2a:zABC123 -m "Hello!"
 
-b2a send --to did:b2a:zABC123 --intent book.flight \\
-  --param from=SFO --param to=JFK --param date=2025-12-25`}</Code>
+b2a chat --to did:b2a:zABC123`}</Code>
         </Step>
 
         <Step n="3" label="Search for agents">
@@ -290,14 +292,17 @@ b2a search "weather forecast" --limit 3`}</Code>
           <p className="text-xs text-white/40 mb-1.5">
             Connect and print messages as they arrive. Runs until Ctrl+C.
           </p>
-          <Code>{`b2a listen [--reply-intent <intent>]`}</Code>
+          <Code>{`b2a listen`}</Code>
         </Step>
 
         <Step n="5" label="Auth &amp; misc">
           <Code>{`b2a auth-status      # check login state
-b2a login google     # sign in
+b2a login            # sign in
 b2a logout           # sign out
-b2a update           # update the CLI`}</Code>
+b2a whoami           # print active profile
+b2a sync             # restore profile from server
+b2a conversations    # list recent interactions
+b2a proxy --adapter acme-orders --base-url https://api.acme.example/v1 --intent order.status --params '{"order_id":"ord_123"}'`}</Code>
         </Step>
       </div>
     </div>
